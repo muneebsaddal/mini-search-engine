@@ -15,30 +15,47 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class Search {
 
-	public void go(String word) {
+	public void go(String words) throws IOException {
 
-		BufferedReader input = null;
-		try {
-			input = new BufferedReader(
-					new FileReader("C:\\Users\\DELL\\Desktop\\indexed\\" + word + ".txt"));	//replace it with where text files are stored
-			String line = null;
-			String[] inputSplit = null;
-			TreeMap<String, String> hmap = new TreeMap<String, String>();
-			while ((line = input.readLine()) != null) {
-				inputSplit = line.split("\\s");
-				hmap.put(inputSplit[3], inputSplit[0]);
+		String word[] = words.split("\\s");
+		if (words.length() == 0) {
+			System.out.println("No word entered!");
+		} else if (word.length == 1) {
+			System.out.println("Single Word!");
+			BufferedReader singleInput = null;
+			try {
+				singleInput = new BufferedReader(new FileReader("C:\\Users\\FMC\\Desktop\\" + word + ".txt"));
+				String line = null;
+				while ((line = singleInput.readLine()) != null) {
+					System.out.println(line);
+				}
+			} catch (IOException e) {
 			}
-			NavigableMap<String, String> nmap = hmap.descendingMap();
-			for (NavigableMap.Entry<String, String> entry : nmap.entrySet()) {
-				System.out.println(" PageID : " + entry.getValue() + "   ---   " + "Rank : " + entry.getKey());
+		} else {
+			System.out.println("Multiple Words!");
+			Hashtable<NavigableMap<String, String>, String> hwh = new Hashtable<NavigableMap<String, String>, String>();
+			for(String it: word){
+				BufferedReader multipleInput = new BufferedReader(
+						new FileReader("C:\\Users\\DELL\\Desktop\\indexed\\" + it + ".txt"));
+				String line = null;
+				String[] inputSplit = null;
+				NavigableMap<String, String> hmap = new TreeMap<String, String>();
+				while ((line = multipleInput.readLine()) != null) {
+					inputSplit = line.split("\\s");
+					hmap.put(inputSplit[3], inputSplit[0]);
+				}
+				hmap = hmap.descendingMap();
+				hwh.put(hmap, it);
+//				for (NavigableMap.Entry<String, String> entry : hmap.entrySet()) {
+//					System.out.println(" PageID : " + entry.getValue() + "   ---   " + "Rank : " + entry.getKey());
+//				}
 			}
-		} catch (IOException e) {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// try {
-		// File inputFile = new File("page.xml");
+		// File inputFile = new File("page1.xml");
 		// SAXParserFactory factory = SAXParserFactory.newInstance();
 		// SAXParser saxParser = factory.newSAXParser();
 		// myHandler myHandler = new myHandler();
@@ -50,11 +67,8 @@ public class Search {
 		System.out.println("Enter word you want to search");
 		String words = scan.nextLine();
 		words = words.toLowerCase();
-		String word[] = words.split("\\s");
-		for (String word1 : word) {
-			System.out.println(word1);
-			new Search().go(word1);
-		}
+		words = words.replaceAll("\\W", " ");
+		new Search().go(words);
 	}
 }
 
@@ -162,20 +176,23 @@ class myHandler extends DefaultHandler {
 					countWord = htext.get(token);
 					tokenDetail.put(id, countWord);
 					rank = (countWord * 25) + (countTitle * 975);
+					String pageTitle = title;
 					String pageRank = Long.toString(rank);
 					String content1 = tokenDetail.toString();
 					String content2 = countTitle.toString();
-					String content = content1.concat(content2);
+					String content = pageTitle.concat(content1);
+					content = content1.concat(content2);
 					String blank = " ";
 					content = content.concat(blank);
 					content = content.concat(pageRank);
 					content = content.replaceAll("\\W+", " ");
 					content = content.trim();
+					System.out.println(content);
 					/***********************************************************************************************************************************/
 					// CREATING TXT FILES FOR EACH WORD
 					/**********************************************************************************************************************************/
 					try {
-						File file = new File("C:\\Users\\DELL\\Desktop\\indexed\\" + token + ".txt");	//replace it with folder where you want to store files
+						File file = new File("C:\\Users\\DELL\\Desktop\\indexed\\" + token + ".txt");
 						if (file.createNewFile()) {
 							// System.out.println("File is created!");
 							try (BufferedWriter bwe = new BufferedWriter(new FileWriter(file, true))) {
