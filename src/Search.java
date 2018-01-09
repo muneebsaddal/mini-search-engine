@@ -24,11 +24,19 @@ public class Search {
 			System.out.println("Single Word!");
 			BufferedReader singleInput = null;
 			try {
-				singleInput = new BufferedReader(new FileReader("C:\\Users\\FMC\\Desktop\\" + word + ".txt"));
+				singleInput = new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\indexed\\" + words + ".txt"));
 				String line = null;
+				String[] inputSplit = null;
+				TreeMap<String, String> hmap = new TreeMap<String, String>();
 				while ((line = singleInput.readLine()) != null) {
-					System.out.println(line);
+					inputSplit = line.split("\\s");
+					hmap.put(inputSplit[3], inputSplit[0]);
+					//System.out.println(line);
 				}
+				NavigableMap<String, String> nmap = hmap.descendingMap();
+				for (NavigableMap.Entry<String, String> entry : nmap.entrySet()) {
+					System.out.println(" PageID : " + entry.getValue() + "   ---   " + "Rank : " + entry.getKey());
+					}
 			} catch (IOException e) {
 			}
 		} else {
