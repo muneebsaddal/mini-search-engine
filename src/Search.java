@@ -1,14 +1,15 @@
-import java.io.FileReader;
 import java.io.BufferedReader;
-import java.util.NavigableMap;
-import java.util.Scanner;
-import java.util.TreeMap;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Hashtable;
+import java.util.NavigableMap;
+import java.util.Scanner;
+import java.util.TreeMap;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -17,32 +18,34 @@ public class Search {
 
 	public void go(String words) throws IOException {
 
+		words = words.replaceAll("\\W+", " ");
 		String word[] = words.split("\\s");
 		if (words.length() == 0) {
 			System.out.println("No word entered!");
 		} else if (word.length == 1) {
-			System.out.println("Single Word!");
+			// Single Word
 			BufferedReader singleInput = null;
 			try {
-				singleInput = new BufferedReader(new FileReader("C:\\Users\\DELL\\Desktop\\indexed\\" + words + ".txt"));
+				singleInput = new BufferedReader(
+						new FileReader("C:\\Users\\DELL\\Desktop\\indexed\\" + words + ".txt"));
 				String line = null;
 				String[] inputSplit = null;
 				TreeMap<String, String> hmap = new TreeMap<String, String>();
 				while ((line = singleInput.readLine()) != null) {
 					inputSplit = line.split("\\s");
 					hmap.put(inputSplit[3], inputSplit[0]);
-					//System.out.println(line);
+					// System.out.println(line);
 				}
 				NavigableMap<String, String> nmap = hmap.descendingMap();
 				for (NavigableMap.Entry<String, String> entry : nmap.entrySet()) {
 					System.out.println(" PageID : " + entry.getValue() + "   ---   " + "Rank : " + entry.getKey());
-					}
+				}
 			} catch (IOException e) {
 			}
 		} else {
-			System.out.println("Multiple Words!");
+			// Multiple Words!
 			Hashtable<NavigableMap<String, String>, String> hwh = new Hashtable<NavigableMap<String, String>, String>();
-			for(String it: word){
+			for (String it : word) {
 				BufferedReader multipleInput = new BufferedReader(
 						new FileReader("C:\\Users\\DELL\\Desktop\\indexed\\" + it + ".txt"));
 				String line = null;
@@ -54,9 +57,9 @@ public class Search {
 				}
 				hmap = hmap.descendingMap();
 				hwh.put(hmap, it);
-//				for (NavigableMap.Entry<String, String> entry : hmap.entrySet()) {
-//					System.out.println(" PageID : " + entry.getValue() + "   ---   " + "Rank : " + entry.getKey());
-//				}
+				for (NavigableMap.Entry<String, String> entry : hmap.entrySet()) {
+					System.out.println(" PageID : " + entry.getValue() + "   ---   " + "Rank : " + entry.getKey());
+				}
 			}
 		}
 	}
@@ -224,8 +227,6 @@ class myHandler extends DefaultHandler {
 					/**********************************************************************************************************************************/
 				}
 			}
-
-			System.out.println(id);
 			AddText = new StringBuilder();
 		}
 	}
